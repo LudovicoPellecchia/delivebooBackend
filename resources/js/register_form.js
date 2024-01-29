@@ -85,8 +85,8 @@ function validateFirstStep() {
         setError(formPass, 'La password non può essere vuota e deve avere almeno 6 caratteri', 'firstStep', 3)
     } else {
         setSuccess(formPass, 'firstStep', 3)
-/*         const confirmPass = document.getElementById('confirmation-password');
-        confirmPass.textContent = formPassValue */
+        /*         const confirmPass = document.getElementById('confirmation-password');
+                confirmPass.textContent = formPassValue */
     }
 
     if (formConfPassValue != formPassValue) {
@@ -246,12 +246,17 @@ togglers.forEach(toggler => {
 
 
 //LOGICA PROGRESS BAR
-const progressCircles = document.querySelectorAll('.circles');
+const progressCircles = document.querySelectorAll('.circle');
 const progressBar = document.querySelector('.indicator')
 
 let currentProgressStep = 1
 
-function updateProgressBar(e){
+function updateProgressBar(e) {
     currentProgressStep = e === nextBtn ? ++currentProgressStep : --currentProgressStep
+
+    progressCircles.forEach((circle, index) => {
+        circle.classList[`${index < currentProgressStep ? "add" : "remove"}`]("active");
+    });
+
 }
 
