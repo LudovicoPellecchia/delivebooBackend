@@ -61,24 +61,24 @@ function validateFirstStep() {
     } else {
         setSuccess(formName, 'firstStep', 0)
         // stampo il valore nel form di conferma
-/*         const confirmName = document.getElementById('confirmation-name');
-        confirmName.textContent = formNameValue */
+        const confirmName = document.getElementById('confirmation-name');
+        confirmName.textContent = formNameValue
     }
 
     if (formSurnameValue == "" || !/^[a-zA-Z]+$/.test(formSurnameValue)) {
         setError(formSurname, 'Il cognome non può essere vuoto e deve contenere solo lettere', 'firstStep', 1)
     } else {
         setSuccess(formSurname, 'firstStep', 1)
-/*         const confirmSurname = document.getElementById('confirmation-surname');
-        confirmSurname.textContent = formSurnameValue */
+        const confirmSurname = document.getElementById('confirmation-surname');
+        confirmSurname.textContent = formSurnameValue
     }
 
     if (formMailValue == "" || !emailRegex.test(formMailValue)) {
         setError(formMail, "L'email non può essere vuota e deve avere un formato valido", 'firstStep', 2)
     } else {
         setSuccess(formMail, 'firstStep', 2)
-/*         const confirmEmail = document.getElementById('confirmation-email');
-        confirmEmail.textContent = formMailValue */
+        const confirmEmail = document.getElementById('confirmation-email');
+        confirmEmail.textContent = formMailValue
     }
 
     if (formPassValue == "" || formPassValue.length < 6) {
@@ -113,26 +113,34 @@ function validateSecondStep() {
         setError(formRestName, "Il nome del ristorante non può essere vuoto e deve contenere solo lettere", 'secondStep', 0)
 
     } else {
-        setSuccess(formRestName, 'secondStep', 0)
+        setSuccess(formRestName, 'secondStep', 0);
+        const confirmRestName = document.getElementById('confirmation-rest-name');
+        confirmRestName.textContent = formRestNameValue
     }
 
     if (formRestAddressValue == "") {
         setError(formRestAddress, "L'indirizzo del ristorante non può essere vuoto", 'secondStep', 1)
     } else {
-        setSuccess(formRestAddress, 'secondStep', 1)
+        setSuccess(formRestAddress, 'secondStep', 1);
+        const confirmRestAddress = document.getElementById('confirmation-rest-address');
+        confirmRestAddress.textContent = formRestAddressValue
     }
 
     if (formRestPivaValue == "" || !pivaRegex.test(formRestPivaValue)) {
         setError(formRestPiva, "La partita IVA deve contenere 11 cifre", 'secondStep', 2)
     } else {
-        setSuccess(formRestPiva, 'secondStep', 2)
+        setSuccess(formRestPiva, 'secondStep', 2);
+        const confirmRestPiva = document.getElementById('confirmation-rest-piva');
+        confirmRestPiva.textContent = formRestPivaValue
 
     }
 
     if (formRestTelValue == "" || !/^\d{10}$/.test(formRestTelValue)) {
         setError(formRestTel, "Il numero di telefono deve contenere 10 cifre", 'secondStep', 3)
     } else {
-        setSuccess(formRestTel, 'secondStep', 3)
+        setSuccess(formRestTel, 'secondStep', 3);
+        const confirmRestTel = document.getElementById('confirmation-rest-tel');
+        confirmRestTel.textContent = formRestTelValue
     }
 
     validated = formValidated['secondStep'].every(value => value === true);
@@ -148,11 +156,8 @@ const nextBtn = form.querySelector('.next-step');
 
 let currentStep = 0
 
-//disabilito il tasto di registrazione fino all'ultimo step
+//recupero il button di registrazione
 const registerBtn = document.getElementById('register-btn')
-if (currentStep === 0) {
-    registerBtn.disabled = true;
-}
 
 prevBtn.style.display = 'none';
 // Gestisce il click sul pulsante "Next"
@@ -175,6 +180,10 @@ nextBtn.addEventListener('click', function () {
     steps[currentStep - 1].style.display = 'none'; // Nascondi il passo corrente
     steps[currentStep].style.display = 'block'; // Mostra il passo successivo
 
+    //Aggiorno la barra di progresso
+    updateProgressBar(nextBtn)
+
+
     // Aggiornamenti supplementari per specifici passi
     if (currentStep === 1) {
         prevBtn.style.display = 'block';
@@ -188,10 +197,15 @@ nextBtn.addEventListener('click', function () {
 // Gestisce il click sul pulsante "Prev"
 prevBtn.addEventListener('click', function () {
     currentStep--
+    registerBtn.disabled = true;
 
     if (currentStep === 0) {
         prevBtn.style.display = 'none'
+        registerBtn.disabled = true;
+
     }
+
+    updateProgressBar(prevBtn)
 
     steps[currentStep + 1].style.display = 'none'; // Nascondi il passo corrente
     steps[currentStep].style.display = 'block'; // Mostra il passo precedente
@@ -201,8 +215,6 @@ prevBtn.addEventListener('click', function () {
 
 //gestione toggle password
 const togglers = document.querySelectorAll('.toggler-pass');
-console.log(togglers)
-
 togglers.forEach(toggler => {
     let mouseIsDown = false;
     const iconWrap = toggler.parentElement;
@@ -232,4 +244,14 @@ togglers.forEach(toggler => {
     });
 });
 
+
+//LOGICA PROGRESS BAR
+const progressCircles = document.querySelectorAll('.circles');
+const progressBar = document.querySelector('.indicator')
+
+let currentProgressStep = 1
+
+function updateProgressBar(e){
+    currentProgressStep = e === nextBtn ? ++currentProgressStep : --currentProgressStep
+}
 

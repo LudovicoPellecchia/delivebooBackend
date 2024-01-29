@@ -55,7 +55,9 @@ class RegisteredUserController extends Controller
             'p_iva' => $request->p_iva,
             'photo' => $request->photo,
             'telephone' => $request->telephone,
+            'user_id' => $user->id, // Associa il ristorante all'utente corrente
         ]);
+
 
         event(new Registered($user));
 
