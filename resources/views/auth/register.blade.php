@@ -15,7 +15,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
 
@@ -94,10 +93,10 @@
 
                                     <div class="client-error-msg password-error"></div>
                                     <div class="icon-wrap">
-                                        <input id="password" type="password"
+                                        <input onchange="inputFeedback()" id="password" type="password"
                                             class="form-control inputPass @error('password') is-invalid @enderror"
                                             name="password" autocomplete="new-password">
-                                        <i class="fa-regular fa-eye-slash toggler-pass"></i>
+                                        <i class="fa-regular fa-eye-slash toggler-pass @error('password') d-none @enderror"></i>
                                     </div>
 
                                     @error('password')
@@ -126,9 +125,9 @@
                         </div>
 
                         <div class="restaurant-form-content form-step" data-step="2" style="display: none;">
+
                             <div class="mb-4 row">
-                                <label for="restaurant_name" class="col-md-4 col-form-label text-md-right">{{ __('Nome
-                                    Ristorante') }}</label>
+                                <label for="restaurant_name" class="col-md-4 col-form-label text-md-right">{{ __('Nome') }}</label>
 
                                 <div class="col-md-6 input-wrapper">
                                     <div class="client-error-msg restaurant-name-error"></div>
@@ -137,6 +136,23 @@
                                         value="{{ old('restaurant_name') }}" autocomplete="restaurant_name" autofocus>
 
                                     @error('restaurant_name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="mb-4 row">
+                                <label for="restaurant_photo" class="col-md-4 col-form-label text-md-right">{{ __('Foto Ristorante') }}</label>
+
+                                <div class="col-md-6 input-wrapper">
+                                    <div class="client-error-msg restaurant-name-error"></div>
+                                    <input id="restaurant_photo" type="file" enctype="multipart/form-data"
+                                        class="form-control @error('photo') is-invalid @enderror" name="restaurant_photo"
+                                        value="{{ old('restaurant_photo') }}" autocomplete="restaurant_photo" autofocus>
+
+                                    @error('restaurant_photo')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

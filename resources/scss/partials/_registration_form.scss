@@ -1,20 +1,22 @@
-.client-error-msg{
+
+
+.client-error-msg {
     font-size: 0.7rem;
     padding-bottom: 0.2rem;
-    color: red ;
+    color: red;
 }
 
-.form-progress-bar{
-    background-color: rgba(128, 128, 128, 0.394);
+.form-progress-bar {
+    background-color: rgb(230, 225, 226);
     height: 10px;
     width: 100%;
     border-radius: 10px;
 }
 
-.icon-wrap{
+.icon-wrap {
     position: relative;
 
-    i{
+    i {
         cursor: pointer;
         color: #dee2e6;
         position: absolute;
@@ -25,47 +27,59 @@
 }
 
 
-.progress-bar-container{
+.progress-bar-container {
     width: 100%;
 
-    .progress-steps{
+    .progress-steps {
         display: flex;
         width: 100%;
         align-items: center;
         justify-content: space-between;
         position: relative;
 
-        .circle{
+        .circle {
             height: 50px;
             width: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 4px solid rgb(220, 220, 220);
+            border: 4px solid rgb(230, 225, 226);
             border-radius: 50%;
             font-size: 1.4rem;
-            background-color: rgb(220, 220, 220) ;
-    
+            background-color: rgb(230, 225, 226);
+            transition: all 300ms ease;
+            transition-delay: 0s;
+
         }
 
-        .active{
-                border-color: green;
+        .active {
+            transition-delay: 200ms;
+            border-color: rgb(63, 162, 166);
         }
 
 
-        .progress-bar{
+        .progress-bar {
             position: absolute;
             height: 4px;
             width: 100%;
-            background-color: rgb(193, 190, 190);
+            background-color: rgb(230, 225, 226);
             z-index: -1;
 
-            .indicator{
+            .indicator {
+                transition: width 1s;
                 position: absolute;
                 height: 100%;
                 width: 0%;
-                background-color: rgba(0, 193, 0, 0.751);
+                background-color: rgb(63, 162, 166);
+                transition: all 300ms ease;
+
             }
         }
     }
+}
+
+
+.form-control:focus {
+    border-color: #0d979eff !important;
+    box-shadow: 0 0 0 0.25rem rgba(63, 163, 166, 0.599) !important;
 }

@@ -1,3 +1,4 @@
+
 //VALIDAZIONI CLIENT FORM
 //primo step
 let formName = document.getElementById('name')
@@ -154,6 +155,7 @@ const steps = form.querySelectorAll('.form-step');
 const prevBtn = form.querySelector('.prev-step');
 const nextBtn = form.querySelector('.next-step');
 
+
 let currentStep = 0
 
 //recupero il button di registrazione
@@ -258,5 +260,15 @@ function updateProgressBar(e) {
         circle.classList[`${index < currentProgressStep ? "add" : "remove"}`]("active");
     });
 
+    progressBar.style.width = `${((currentProgressStep - 1) / (progressCircles.length - 1)) * 100}%`
+
+}
+
+
+function inputFeedback() {
+    console.log('ciao')
+}
+formName.onchange = function(){
+inputFeedback()
 }
 
