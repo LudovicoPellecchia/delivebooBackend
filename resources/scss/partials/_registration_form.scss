@@ -83,3 +83,26 @@
     border-color: #0d979eff !important;
     box-shadow: 0 0 0 0.25rem rgba(63, 163, 166, 0.599) !important;
 }
+
+
+.step-name{
+    margin-top: 5px;
+    font-size: 0.8rem;
+    transform: translate(25%, 0);
+
+}
+.step-name:first-child{
+    transform: translate(-10%, 0);
+}
+
+#photoPreview{
+    display: inline-block;
+    width: 150px;
+
+    img{
+        border-radius: 10px;
+
+    }
+}
+
+

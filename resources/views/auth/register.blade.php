@@ -13,18 +13,22 @@
                         <span class="indicator"></span>
                     </div>
                 </div>
+                <div class="d-flex justify-content-between">
+                    <div class="step-name">Il tuo profilo</div>
+                    <div class="step-name">Il tuo ristorante</div>
+                    <div class="step-name">Conferma i tuoi dati</div>
+                </div>
             </div>
         </div>
     </div>
 
-
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
-
+{{--                 <div class="card-header" id="step-header">{{ __('Il tuo profi') }}</div>
+ --}}
                 <div class="card-body">
-                    <form id="registrationForm" method="POST" action="{{ route('register') }}">
+                    <form id="registrationForm" method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="user-form-content form-step" data-step="1">
@@ -93,7 +97,7 @@
 
                                     <div class="client-error-msg password-error"></div>
                                     <div class="icon-wrap">
-                                        <input onchange="inputFeedback()" id="password" type="password"
+                                        <input id="password" type="password"
                                             class="form-control inputPass @error('password') is-invalid @enderror"
                                             name="password" autocomplete="new-password">
                                         <i class="fa-regular fa-eye-slash toggler-pass @error('password') d-none @enderror"></i>
@@ -144,13 +148,15 @@
                             </div>
 
                             <div class="mb-4 row">
-                                <label for="restaurant_photo" class="col-md-4 col-form-label text-md-right">{{ __('Foto Ristorante') }}</label>
+                                <label for="restaurant_photo" class="col-md-4 col-form-label text-md-right">{{ __('Foto') }}</label>
 
                                 <div class="col-md-6 input-wrapper">
                                     <div class="client-error-msg restaurant-name-error"></div>
-                                    <input id="restaurant_photo" type="file" enctype="multipart/form-data"
+                                    <input id="restaurant_photo" type="file"
                                         class="form-control @error('photo') is-invalid @enderror" name="restaurant_photo"
-                                        value="{{ old('restaurant_photo') }}" autocomplete="restaurant_photo" autofocus>
+                                        autocomplete="restaurant_photo" autofocus>
+                                        
+                                        <div id="photo-preview"></div>
 
                                     @error('restaurant_photo')
                                     <span class="invalid-feedback" role="alert">
@@ -214,6 +220,34 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
+                                </div>
+
+
+                                <div class="mb-4 row">
+                                    <label for="typologies" class="col-md-4 col-form-label text-md-right">{{ __('Tipologia')
+                                        }}</label>
+    
+                                    <div class="col-md-6 input-wrapper">
+                                        <div class="client-error-msg restaurant-telephone-error"></div>
+    
+                                        @foreach ($typologies as $typology)
+                                            
+        
+                                
+                                        <input type="checkbox"
+                                            class="typologies form-check-input @error('typologies') is-invalid @enderror" name="typologies[]"
+                                            value="{{ old('typologies') }}" required  autofocus>
+                                            <label class="form-check-label" id="{{ $typology->id }} for="{{ $typology->id }}">{{ $typology->name
+                                            }}</label>
+    
+                                        @endforeach
+    
+                                        @error('typologies')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
 
@@ -311,6 +345,17 @@
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                             @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <div for="restaurant_photo" class=" text-md-right">{{ __('Foto:')
+                                            }}</div>
+
+                                        <div>
+                                            <div id="confirmation-rest-photo">
+                                                
+                                            </div>
                                         </div>
                                     </div>
 

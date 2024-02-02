@@ -8,6 +8,7 @@ let formPass = document.getElementById('password')
 let formConfPass = document.getElementById('password-confirm')
 //secondo step
 let formRestName = document.getElementById('restaurant_name')
+let formRestPhoto = document.getElementById('restaurant_photo')
 let formRestAddress = document.getElementById('address')
 let formRestPiva = document.getElementById('p_iva')
 let formRestTel = document.getElementById('telephone')
@@ -16,7 +17,7 @@ let validated = false
 
 const formValidated = {
     firstStep: [false, false, false, false, false],
-    secondStep: [false, false, false, false]
+    secondStep: [false, false, false, false, false]
 };
 
 
@@ -103,11 +104,13 @@ function validateFirstStep() {
 //VALIDAZIONE SECONDO STEP
 function validateSecondStep() {
     const formRestNameValue = formRestName.value.trim()
+    const formRestPhotoFile = formRestPhoto?.files?.[0]
     const formRestAddressValue = formRestAddress.value.trim()
     const formRestPivaValue = formRestPiva.value.trim()
     const formRestTelValue = formRestTel.value.trim()
 
     let pivaRegex = /^\d{11}$/; // Esempio: Partita IVA con 11 cifre
+    let photoFormats = ["image/jpeg", "image/png", "image/gif"];
 
     if (formRestNameValue == "" || !/^[a-zA-Z0-9\s]+$/.test(formRestNameValue)) {
         //Mostra un messaggio di errore
@@ -119,27 +122,38 @@ function validateSecondStep() {
         confirmRestName.textContent = formRestNameValue
     }
 
-    if (formRestAddressValue == "") {
-        setError(formRestAddress, "L'indirizzo del ristorante non può essere vuoto", 'secondStep', 1)
+
+    if ((formRestPhotoFile && !photoFormats.includes(formRestPhotoFile.type))) {
+        //Mostra un messaggio di errore
+        setError(formRestPhoto, "La foto deve essere in formato JPEG, PNG o GIF.", 'secondStep', 1)
+
     } else {
-        setSuccess(formRestAddress, 'secondStep', 1);
+        setSuccess(formRestPhoto, 'secondStep', 1);
+/*         const confirmRestPhoto = document.getElementById('confirmation-rest-photo');
+        confirmRestPhoto.textContent = formRestPhotoFile ? formRestPhotoFile.name : '' */
+    }
+
+    if (formRestAddressValue == "") {
+        setError(formRestAddress, "L'indirizzo del ristorante non può essere vuoto", 'secondStep', 2)
+    } else {
+        setSuccess(formRestAddress, 'secondStep', 2);
         const confirmRestAddress = document.getElementById('confirmation-rest-address');
         confirmRestAddress.textContent = formRestAddressValue
     }
 
     if (formRestPivaValue == "" || !pivaRegex.test(formRestPivaValue)) {
-        setError(formRestPiva, "La partita IVA deve contenere 11 cifre", 'secondStep', 2)
+        setError(formRestPiva, "La partita IVA deve contenere 11 cifre", 'secondStep', 3)
     } else {
-        setSuccess(formRestPiva, 'secondStep', 2);
+        setSuccess(formRestPiva, 'secondStep', 3);
         const confirmRestPiva = document.getElementById('confirmation-rest-piva');
         confirmRestPiva.textContent = formRestPivaValue
 
     }
 
     if (formRestTelValue == "" || !/^\d{10}$/.test(formRestTelValue)) {
-        setError(formRestTel, "Il numero di telefono deve contenere 10 cifre", 'secondStep', 3)
+        setError(formRestTel, "Il numero di telefono deve contenere 10 cifre", 'secondStep', 4)
     } else {
-        setSuccess(formRestTel, 'secondStep', 3);
+        setSuccess(formRestTel, 'secondStep', 4);
         const confirmRestTel = document.getElementById('confirmation-rest-tel');
         confirmRestTel.textContent = formRestTelValue
     }
@@ -265,10 +279,67 @@ function updateProgressBar(e) {
 }
 
 
-function inputFeedback() {
-    console.log('ciao')
+/* function inputFeedback(validateFunction, element) {
+    validateFunction(element);
 }
-formName.onchange = function(){
-inputFeedback()
+
+// Ottieni tutti gli elementi di input nel form
+const inputElements = form.querySelectorAll('input[id]');
+const inputArray = Array.from(inputElements);
+
+console.log(inputArray)
+
+// Assegna la funzione inputFeedback a ciascun elemento di input
+inputArray.forEach(input => {
+    input.onchange = function() {
+        // Passa la funzione di validazione (validateFirstStep o validateSecondStep) e l'elemento corrente
+        inputFeedback(validateFirstStep, input);
+    };
+}); */
+
+
+//LOGICA PREVIEW FOTO
+formRestPhoto.onchange = function () {
+    previewImage()
 }
+function previewImage() {
+    const imagePreview = document.getElementById('photo-preview');
+    const confirmationPhoto = document.getElementById('confirmation-rest-photo')
+
+    // Assicurati che sia selezionato un file
+    if (formRestPhoto.files && formRestPhoto.files[0] && ["image/jpeg", "image/png", "image/gif"].includes(formRestPhoto.files[0].type)) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            // Crea un elemento immagine
+            const image = document.createElement('img');
+            image.src = e.target.result;
+            image.alt = 'Image Preview';
+            image.style.width = '100%'
+
+            const imageConfirmation = document.createElement('img');
+            imageConfirmation.src = e.target.result;
+            imageConfirmation.alt = 'Image Preview';
+            imageConfirmation.style.width = '100%'
+
+            // Rimuovi eventuali anteprime precedenti
+            while (imagePreview.firstChild) {
+                imagePreview.removeChild(imagePreview.firstChild);
+            }
+
+            while (confirmationPhoto.firstChild) {
+                confirmationPhoto.removeChild(confirmationPhoto.firstChild);
+            }
+
+            // Aggiungi l'immagine all'elemento di anteprima
+            imagePreview.appendChild(image);
+            confirmationPhoto.appendChild(imageConfirmation);
+
+        };
+
+        // Leggi il contenuto del file come URL dati
+        reader.readAsDataURL(formRestPhoto.files[0]);
+    }
+}
+
 

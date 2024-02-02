@@ -30,7 +30,7 @@ class RegisterStoreRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'restaurant_name' => ['required', 'string', 'max:255'],
-            'restaurant_photo' => ['nullable', 'file'],
+            'restaurant_photo' => ['nullable', 'file', 'mimes:jpeg,png,jpg'],
             'address' => ['required', 'string', 'max:255'],
             'p_iva' => ['required', 'string', 'max:255'],
             'telephone' => ['required', 'string', 'max:255'],
