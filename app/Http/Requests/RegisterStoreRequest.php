@@ -34,6 +34,7 @@ class RegisterStoreRequest extends FormRequest
             'address' => ['required', 'string', 'max:255'],
             'p_iva' => ['required', 'string', 'max:255'],
             'telephone' => ['required', 'string', 'max:255'],
+            'typologies' => ['required', 'array', 'max:255'],
             'user_id',
         ];
     }
@@ -77,6 +78,8 @@ class RegisterStoreRequest extends FormRequest
             'telephone.required' => 'Il campo telefono è obbligatorio.',
             'telephone.string' => 'Il campo telefono deve essere una stringa.',
             'telephone.max' => 'Il campo telefono non deve superare i 255 caratteri.',
+
+            'typologies.required' => 'Seleziona almeno una specializzazione.'
         ];
     }
     

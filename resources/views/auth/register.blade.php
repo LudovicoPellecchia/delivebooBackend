@@ -25,10 +25,11 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-{{--                 <div class="card-header" id="step-header">{{ __('Il tuo profi') }}</div>
- --}}
+                {{-- <div class="card-header" id="step-header">{{ __('Il tuo profi') }}</div>
+                --}}
                 <div class="card-body">
-                    <form id="registrationForm" method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
+                    <form id="registrationForm" method="POST" action="{{ route('register') }}"
+                        enctype="multipart/form-data">
                         @csrf
 
                         <div class="user-form-content form-step" data-step="1">
@@ -100,7 +101,8 @@
                                         <input id="password" type="password"
                                             class="form-control inputPass @error('password') is-invalid @enderror"
                                             name="password" autocomplete="new-password">
-                                        <i class="fa-regular fa-eye-slash toggler-pass @error('password') d-none @enderror"></i>
+                                        <i
+                                            class="fa-regular fa-eye-slash toggler-pass @error('password') d-none @enderror"></i>
                                     </div>
 
                                     @error('password')
@@ -131,7 +133,8 @@
                         <div class="restaurant-form-content form-step" data-step="2" style="display: none;">
 
                             <div class="mb-4 row">
-                                <label for="restaurant_name" class="col-md-4 col-form-label text-md-right">{{ __('Nome') }}</label>
+                                <label for="restaurant_name" class="col-md-4 col-form-label text-md-right">{{ __('Nome')
+                                    }}</label>
 
                                 <div class="col-md-6 input-wrapper">
                                     <div class="client-error-msg restaurant-name-error"></div>
@@ -148,15 +151,16 @@
                             </div>
 
                             <div class="mb-4 row">
-                                <label for="restaurant_photo" class="col-md-4 col-form-label text-md-right">{{ __('Foto') }}</label>
+                                <label for="restaurant_photo" class="col-md-4 col-form-label text-md-right">{{
+                                    __('Foto') }}</label>
 
                                 <div class="col-md-6 input-wrapper">
                                     <div class="client-error-msg restaurant-name-error"></div>
                                     <input id="restaurant_photo" type="file"
-                                        class="form-control @error('photo') is-invalid @enderror" name="restaurant_photo"
-                                        autocomplete="restaurant_photo" autofocus>
-                                        
-                                        <div id="photo-preview"></div>
+                                        class="form-control @error('photo') is-invalid @enderror"
+                                        name="restaurant_photo" autocomplete="restaurant_photo" autofocus>
+
+                                    <div id="photo-preview"></div>
 
                                     @error('restaurant_photo')
                                     <span class="invalid-feedback" role="alert">
@@ -224,24 +228,22 @@
 
 
                                 <div class="mb-4 row">
-                                    <label for="typologies" class="col-md-4 col-form-label text-md-right">{{ __('Tipologia')
+                                    <label for="typologies" class="col-md-4 col-form-label text-md-right">{{
+                                        __('Tipologia')
                                         }}</label>
-    
+
                                     <div class="col-md-6 input-wrapper">
                                         <div class="client-error-msg restaurant-telephone-error"></div>
-    
+
                                         @foreach ($typologies as $typology)
-                                            
-        
-                                
-                                        <input type="checkbox"
-                                            class="typologies form-check-input @error('typologies') is-invalid @enderror" name="typologies[]"
-                                            value="{{ old('typologies') }}" required  autofocus>
-                                            <label class="form-check-label" id="{{ $typology->id }} for="{{ $typology->id }}">{{ $typology->name
+
+                                        <input type="checkbox" id="{{ $typology->id }}"
+                                            class="typologies form-check-input @error('typologies') is-invalid @enderror"
+                                            name="typologies[]" value="{{ $typology->id }}" autofocus>
+                                            <label class="form-check-label" for="{{ $typology->id }}">{{ $typology->name
                                             }}</label>
-    
                                         @endforeach
-    
+
                                         @error('typologies')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -304,13 +306,21 @@
                                             </div>
                                         </div>
 
-                                        {{-- <div class="mb-4">
-                                            <label for="password" class=" text-md-right">{{ __('Password') }}</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="restaurant-form-content">
+                                        <h3 class="text-center">Il tuo ristorante</h3>
+
+                                        <div class="mb-4">
+                                            <label for="restaurant_name" class=" text-md-right">{{ __('Nome
+                                                Ristorante:')
+                                                }}</label>
 
                                             <div>
-                                                <div id="confirmation-data"></div>
+                                                <div id="confirmation-rest-name"></div>
 
-                                                @error('password')
+                                                @error('restaurant_name')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
@@ -319,125 +329,95 @@
                                         </div>
 
                                         <div class="mb-4">
-                                            <label for="password-confirm" class=" text-md-right">{{ __('Conferma
-                                                Password') }}</label>
+                                            <div for="restaurant_photo" class=" text-md-right">{{ __('Foto:')
+                                                }}</div>
 
                                             <div>
-                                                <div id="confirmation-data"></div>
+                                                <div id="confirmation-rest-photo">
+
+                                                </div>
                                             </div>
                                         </div>
-                                    </div> --}}
+
+                                        <div class="mb-4">
+                                            <label for="address" class=" text-md-right">{{ __('Indirizzo:') }}</label>
+
+                                            <div>
+                                                <div id="confirmation-rest-address"></div>
+
+                                                @error('address')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="p_iva" class=" text-md-right">{{ __('P.IVA:') }}</label>
+
+                                            <div>
+                                                <div id="confirmation-rest-piva"></div>
+
+                                                @error('p_iva')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="telephone" class=" text-md-right">{{ __('Telefono:') }}</label>
+
+                                            <div>
+                                                <div id="confirmation-rest-tel"></div>
+
+                                                @error('telephone')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="restaurant-form-content">
-                                    <h3 class="text-center">Il tuo ristorante</h3>
-
-                                    <div class="mb-4">
-                                        <label for="restaurant_name" class=" text-md-right">{{ __('Nome Ristorante:')
-                                            }}</label>
-
-                                        <div>
-                                            <div id="confirmation-rest-name"></div>
-
-                                            @error('restaurant_name')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <div for="restaurant_photo" class=" text-md-right">{{ __('Foto:')
-                                            }}</div>
-
-                                        <div>
-                                            <div id="confirmation-rest-photo">
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label for="address" class=" text-md-right">{{ __('Indirizzo:') }}</label>
-
-                                        <div>
-                                            <div id="confirmation-rest-address"></div>
-
-                                            @error('address')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label for="p_iva" class=" text-md-right">{{ __('P.IVA:') }}</label>
-
-                                        <div>
-                                            <div id="confirmation-rest-piva"></div>
-
-                                            @error('p_iva')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label for="telephone" class=" text-md-right">{{ __('Telefono:') }}</label>
-
-                                        <div>
-                                            <div id="confirmation-rest-tel"></div>
-
-                                            @error('telephone')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                    </div>
 
 
 
+                            <div class="mb-4 row mb-0">
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="submit" class="btn btn-primary" id="register-btn" disabled>
+                                        {{ __('Register') }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
 
 
                         <div class="mb-4 row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary" id="register-btn" disabled>
-                                    {{ __('Register') }}
+                                <button type="button" class="btn btn-primary next-step">
+                                    {{ __('Avanti') }}
                                 </button>
                             </div>
                         </div>
+                        <div class="mb-4 row mb-0">
+                            <div class="col-md-6 offset-md-4">
+                                <button type="button" class="btn btn-primary prev-step">
+                                    {{ __('Indietro') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-
-                <div class="mb-4 row mb-0">
-                    <div class="col-md-6 offset-md-4">
-                        <button type="button" class="btn btn-primary next-step">
-                            {{ __('Avanti') }}
-                        </button>
-                    </div>
-                </div>
-                <div class="mb-4 row mb-0">
-                    <div class="col-md-6 offset-md-4">
-                        <button type="button" class="btn btn-primary prev-step">
-                            {{ __('Indietro') }}
-                        </button>
-                    </div>
-                </div>
-                </form>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 @vite(['resources/js/register_form.js'])

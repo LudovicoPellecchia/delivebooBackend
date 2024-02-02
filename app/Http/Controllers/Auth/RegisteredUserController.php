@@ -64,6 +64,7 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id
         ]);
 
+        $restaurant->typologies()->attach($data['typologies']);
 
         event(new Registered($user));
 
