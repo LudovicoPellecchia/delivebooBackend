@@ -10,31 +10,169 @@ export default {
         return {
             formData: {
                 firstStep: {
-                    name: '',
-                    surname: '',
-                    email: '',
-                    password: '',
-                    confirmPassword: ''
+                    name: {
+                        value: '',
+                        label: 'Name',
+                        validated: false,
+                        errorMessage: 'Il nome non può essere vuoto e deve contenere solo lettere',
+                        validations: {
+                            minLength: 3,
+                            required: true,
+                            regex: /^[a-zA-Z]+$/
+                        }
+                    },
+                    surname: {
+                        value: '',
+                        label: 'Surname',
+                        validated: false,
+                        errorMessage: 'Il cognome non può essere vuoto e deve contenere solo lettere',
+                        validations: {
+                            minLength: 3,
+                            required: true,
+                            regex: /^[a-zA-Z]+$/
+                        }
+                    },
+                    email: {
+                        value: '',
+                        label: 'E-Mail',
+                        validated: false,
+                        errorMessage: 'L\'email non può essere vuota e deve avere un formato valido',
+                        validations: {
+                            required: true,
+                            regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+                        }
+                    },
+                    password: {
+                        value: '',
+                        label: 'Password',
+                        validated: false,
+                        errorMessage: 'La password non può essere vuota e deve avere almeno 6 caratteri',
+                        validations: {
+                            required: true,
+                            minLength: 6
+                        }
+                    },
+                    confirmPassword: {
+                        value: '',
+                        label: 'Confirm Password',
+                        validated: false,
+                        errorMessage: 'La conferma deve essere uguale alla password',
+                        validations: {
+                            required: true,
+                        }
+                    }
                 },
                 secondStep: {
-                    restaurantName: '',
-                    restaurantPhoto: '',
-                    restaurantAddress: '',
-                    restaurantCategories: []
+                    restaurantName: {
+                        value: '',
+                        label: 'Name',
+                        validated: false,
+                        errorMessage: 'Il nome del ristorante non può essere vuoto e deve contenere solo lettere e numeri',
+                        validations: {
+                            required: true,
+                            regex: /^[a-zA-Z0-9\s]+$/
+                        }
+                    },
+                    restaurantPhoto: {
+                        value: '',
+                        label: 'Photo',
+                        validated: false,
+                        errorMessage: 'La foto deve essere in formato JPEG, PNG o GIF',
+                        validations: {
+                            required: true,
+                            fileType: ['jpeg', 'png', 'gif']
+                        }
+                    },
+                    restaurantAddress: {
+                        value: '',
+                        label: 'Address',
+                        validated: false,
+                        errorMessage: 'L\'indirizzo del ristorante non può essere vuoto',
+                        validations: {
+                            required: true
+                        }
+                    },
+                    restaurantCategories: {
+                        value: [],
+                        label: 'Categories',
+                        validated: false,
+                        errorMessage: 'Seleziona almeno una categoria per il ristorante',
+                        validations: {
+                            required: true,
+                            minLength: 1
+                        }
+                    }
                 }
             },
-            IsFirstStepValidated: false,
-            IsSecondStepValidated: false
 
+            IsFirstStepValidated: false,
+            IsSecondStepValidated: false,
+            currentField: [],
+            currentStep: 0
 
 
 
         }
     },
     methods: {
+        validateField(fieldName) {
+
+            //recupero il campo 
+            const field = this.formData.firstStep[fieldName];
+            //aggiorno una variabile di stato con il campo validato per mostrarne il msg di errore personalizzato
+            this.currentField = field
+            //valore input utente
+            const value = field.value;
+
+            const regex = field.validations.regex;
+            const isPatternValid = regex ? regex.test(value) : true;
+
+            const minLength = field.validations.minLength;
+            const isLengthValid = minLength ? value.length >= minLength : true;
+
+
+            if (!isPatternValid || !isLengthValid) {
+                field.validated = false;
+            } else {
+                field.validated = true;
+            }
+
+
+        },
+
+        validateFirstStep() {
+            // Inizializza IsFirstStepValidated a true
+            this.IsFirstStepValidated = true;
+            
+            // Cicla su tutti i campi della prima fase
+            for (let fieldName in this.formData.firstStep) {
+                const field = this.formData.firstStep[fieldName];
+
+                // Se un campo non è validato, imposta IsFirstStepValidated a false e interrompi il ciclo
+                if (!field.validated) {
+                    this.IsFirstStepValidated = false;
+                    this.currentField.push(field)
+                    return; // Esci dalla funzione in quanto almeno un campo non è valido
+                }
+            }
+        },
+
+
+        nextStep() {
+            this.validateFirstStep()
+            if (this.IsFirstStepValidated) {
+                this.currentStep++
+            }
+        },
+
+        prevStep() {
+            this.currentStep--
+            this.IsFirstStepValidated = false
+        },
+
         submitForm() {
 
-        }
+        },
     },
 }
 </script>
@@ -46,118 +184,44 @@ export default {
                 <div class="row no-gutters">
                     <div class="col-7">
                         <form action="#" class="form-sct" @submit.prevent="submitForm" enctype="multipart/form-data">
-                            <div class="first-Step">
+
+                            <div v-if="currentStep === 0" class="first-Step">
                                 <h3>Your Profile</h3>
 
-
-                                <div class="input-field">
-                                    <label for="name">Name</label>
+                                <div v-for="(field, fieldName) in formData.firstStep" :key="fieldName" class="input-wrapper">
                                     <div>
-                                        <div class="client-error-msg name-error"></div>
-
-                                        <input v-model="formData.firstStep.name" id="name" type="text" class="form-control "
-                                            name="name" autocomplete="name" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="surname">Surname</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input v-model="formData.firstStep.surname" id="surname" type="text"
-                                            class="form-control " name="surname" autocomplete="surname" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="email">E-Mail</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input v-model="formData.firstStep.email" id="email" type="text"
-                                            class="form-control " name="email" autocomplete="email" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="password">Password</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input v-model="formData.firstStep.password" id="password" type="password"
-                                            class="form-control " name="password" autocomplete="password" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="password-confirm">Confirm Password</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input v-model="formData.firstStep.confirmPassword" id="password-confirm"
-                                            type="password" class="form-control" name="password-confirm"
-                                            autocomplete="password-confirm" autofocus>
+                                        <label :for="fieldName">{{ field.label }}</label>
+                                        <input @blur="validateField(fieldName)" v-model="field.value" :id="fieldName"
+                                            :type="fieldName === 'password' || fieldName === 'confirmPassword' ? 'password' : 'text'"
+                                            class="form-control" :name="fieldName" :autocomplete="fieldName">
+                                        <div v-if="field === currentField[0] && !field.validated" class="client-error-msg">{{
+                                            field.errorMessage }}</div>
                                     </div>
                                 </div>
                             </div>
 
                             <div v-if="IsFirstStepValidated" class="second-step">
                                 <h3>Your Restaurant</h3>
-
-
-                                <div class="input-field">
-                                    <label for="restaurant_name">Name</label>
+                                <div v-for="(field, fieldName) in formData.secondStep" :key="fieldName" class="input-wrapper">
+                                    <label :for="fieldName">{{ fieldName }}</label>
                                     <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input id="restaurant_name" type="text" class="form-control " name="restaurant_name"
-                                            autocomplete="restaurant_name" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="restaurant_photo">Photo</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input id="restaurant_photo" type="file" class="form-control "
-                                            name="restaurant_photo" autocomplete="restaurant_photo" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="restaurant_address">Address</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input id="restaurant_address" type="text" class="form-control "
-                                            name="restaurant_address" autocomplete="restaurant_address" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="restaurant_tel">Telephone</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input id="restaurant_tel" type="text" class="form-control " name="restaurant_tel"
-                                            autocomplete="restaurant_tel" autofocus>
-                                    </div>
-                                </div>
-
-                                <div class="input-field">
-                                    <label for="typologies">Categories</label>
-                                    <div>
-                                        <div class="client-error-msg name-error"></div>
-                                        <input id="typologies" type="text" class="form-control " name="typologies"
-                                            autocomplete="typologies" autofocus>
+                                        <div class="client-error-msg"></div>
+                                        <input v-model="field.value" :id="fieldName" :type="fieldName === 'restaurantPhoto' || fieldName === 'restaurantCategories' ?
+                                            (fieldName === 'restaurantPhoto' ? 'file' : 'checkbox') : 'text'"
+                                            class="form-control" :name="fieldName" :autocomplete="fieldName">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="btns-wrapper">
 
-                                <div class="prev-arrow">
+                                <div v-if="currentStep >= 1" @click="prevStep()" class="prev-arrow">
                                     <div class="prev-step">
                                         <i class="fa-solid fa-arrow-left"></i>
                                     </div>
                                 </div>
 
-                                <div class="next-arrow">
-
+                                <div v-if="currentStep < 2" @click="nextStep()" class="next-arrow">
                                     <i class="fa-solid fa-arrow-right"></i>
                                 </div>
 
@@ -199,7 +263,7 @@ export default {
         padding-bottom: 30px;
     }
 
-    .input-field {
+    .input-wrapper {
         padding: 0 15px;
         padding-bottom: 15px;
 
@@ -224,13 +288,17 @@ export default {
     display: flex;
     justify-content: space-between;
 
-    i{
+    i {
         cursor: pointer;
         font-size: 2rem;
 
-        &:hover{
-            border-bottom: 2px solid black;    
+        &:hover {
+            border-bottom: 2px solid black;
         }
+    }
+
+    .next-arrow {
+        margin-left: auto;
     }
 }
 </style>
