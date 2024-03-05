@@ -1,13 +1,16 @@
 <script>
+import { store, getTypologiesFromApi } from '../../store'
+import ProgressBar from './ProgressBar.vue';
 
 export default {
     props: {
     },
     components: {
-
+        ProgressBar
     },
     data() {
         return {
+            store,
             formData: {
                 firstStep: {
                     name: {
@@ -58,6 +61,7 @@ export default {
                         validated: false,
                         errorMessage: 'La conferma deve essere uguale alla password',
                         validations: {
+                            minLength: 6,
                             required: true,
                         }
                     }
@@ -74,13 +78,15 @@ export default {
                         }
                     },
                     restaurantPhoto: {
-                        value: '',
+                        value: null,
+                        file: null,
                         label: 'Photo',
                         validated: false,
                         errorMessage: 'La foto deve essere in formato JPEG, PNG o GIF',
                         validations: {
                             required: true,
-                            fileType: ['jpeg', 'png', 'gif']
+                            fileType: ['jpeg', 'png', 'jpg'],
+                            regex: /\.(jpeg|jpg|png)$/i
                         }
                     },
                     restaurantAddress: {
@@ -89,7 +95,9 @@ export default {
                         validated: false,
                         errorMessage: 'L\'indirizzo del ristorante non può essere vuoto',
                         validations: {
-                            required: true
+                            required: true,
+                            minLength: 3
+
                         }
                     },
                     restaurantCategories: {
@@ -107,21 +115,24 @@ export default {
 
             IsFirstStepValidated: false,
             IsSecondStepValidated: false,
-            currentField: [],
-            currentStep: 0
+            currentField: null,
+            currentStep: 0,
 
-
+            progress: 0,
+            imgPreview: null
 
         }
     },
     methods: {
-        validateField(fieldName) {
 
-            //recupero il campo 
-            const field = this.formData.firstStep[fieldName];
-            //aggiorno una variabile di stato con il campo validato per mostrarne il msg di errore personalizzato
-            this.currentField = field
-            //valore input utente
+        validateField(fieldName, step) {
+            // Recupero il campo
+            const field = this.formData[step][fieldName];
+
+            // Aggiorno una variabile di stato con il campo validato per mostrarne il messaggio di errore personalizzato
+            this.currentField = field;
+
+            // Valore input utente
             const value = field.value;
 
             const regex = field.validations.regex;
@@ -130,20 +141,26 @@ export default {
             const minLength = field.validations.minLength;
             const isLengthValid = minLength ? value.length >= minLength : true;
 
-
-            if (!isPatternValid || !isLengthValid) {
-                field.validated = false;
-            } else {
-                field.validated = true;
+            // Controllo sull'uguaglianza tra confirmPassword e password solo se il campo è 'confirmPassword'
+            if (fieldName === 'confirmPassword') {
+                const password = this.formData.firstStep['password'].value;
+                const isConfirmValid = value === password;
+                field.validated = isConfirmValid;
             }
-
-
+            else {
+                if (!isPatternValid || !isLengthValid) {
+                    field.validated = false;
+                } else {
+                    field.validated = true;
+                }
+            }
         },
+
 
         validateFirstStep() {
             // Inizializza IsFirstStepValidated a true
             this.IsFirstStepValidated = true;
-            
+
             // Cicla su tutti i campi della prima fase
             for (let fieldName in this.formData.firstStep) {
                 const field = this.formData.firstStep[fieldName];
@@ -151,67 +168,131 @@ export default {
                 // Se un campo non è validato, imposta IsFirstStepValidated a false e interrompi il ciclo
                 if (!field.validated) {
                     this.IsFirstStepValidated = false;
-                    this.currentField.push(field)
+                    this.currentField = field
                     return; // Esci dalla funzione in quanto almeno un campo non è valido
                 }
             }
         },
 
 
+        handleImgFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.formData.secondStep.restaurantPhoto.value = file.name
+                this.formData.secondStep.restaurantPhoto.file = file
+                console.log(this.formData.secondStep.restaurantPhoto.file)
+
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    // Leggi il contenuto dell'immagine come URL
+                    this.imgPreview = reader.result;
+                }
+
+                reader.readAsDataURL(file);
+            }
+
+
+        },
+
+
+
         nextStep() {
             this.validateFirstStep()
             if (this.IsFirstStepValidated) {
+                this.stepTransitioning
                 this.currentStep++
+
+                this.progress += 0.5
             }
         },
 
         prevStep() {
             this.currentStep--
             this.IsFirstStepValidated = false
+            this.progress -= 0.5
+
         },
 
         submitForm() {
 
         },
     },
+    computed: {
+
+    },
+    mounted() {
+        getTypologiesFromApi()
+    }
 }
 </script>
 
 <template>
+    <ProgressBar :progress="progress"></ProgressBar>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
+            <div class="col-12 col-lg-10 col-xl-8">
                 <div class="row no-gutters">
                     <div class="col-7">
-                        <form action="#" class="form-sct" @submit.prevent="submitForm" enctype="multipart/form-data">
+                        <form action="#" class="form-sct" method="post" @submit.prevent="submitForm"
+                            enctype="multipart/form-data">
 
                             <div v-if="currentStep === 0" class="first-Step">
                                 <h3>Your Profile</h3>
 
-                                <div v-for="(field, fieldName) in formData.firstStep" :key="fieldName" class="input-wrapper">
+                                <div v-for="(field, fieldName) in formData.firstStep" :key="fieldName"
+                                    class="input-wrapper">
                                     <div>
                                         <label :for="fieldName">{{ field.label }}</label>
-                                        <input @blur="validateField(fieldName)" v-model="field.value" :id="fieldName"
+
+                                        <input @blur="validateField(fieldName, 'firstStep')" v-model="field.value"
+                                            :id="fieldName"
                                             :type="fieldName === 'password' || fieldName === 'confirmPassword' ? 'password' : 'text'"
                                             class="form-control" :name="fieldName" :autocomplete="fieldName">
-                                        <div v-if="field === currentField[0] && !field.validated" class="client-error-msg">{{
+
+                                        <div v-if="field === currentField && !field.validated" class="client-error-msg">
+                                            {{
+                                                field.errorMessage }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div v-if="currentStep === 1" class="second-step">
+                                <h3>Your Restaurant</h3>
+                                <div v-for="(field, fieldName) in formData.secondStep" :key="fieldName"
+                                    class="input-wrapper">
+
+                                    <div>
+                                        <label :for="fieldName">{{ field.label }}</label>
+
+                                        <div v-if="fieldName === 'restaurantCategories'" class="categories-container">
+                                            <div class="category-wrapper" v-for="(category, index) in store.typologies"
+                                                :key="index">
+                                                <input @blur="validateField(fieldName, 'secondStep')" type="checkbox"
+                                                    :id="'category_' + index" :value="category.name" v-model="field.value">
+                                                <label :for="'category_' + index">{{ category.name }}</label>
+                                            </div>
+                                        </div>
+                                        <div v-else-if="fieldName === 'restaurantPhoto'">
+                                            <input @blur="validateField(fieldName, 'secondStep')" :id="fieldName"
+                                                type="file" @change="handleImgFile" class="form-control" :name="fieldName"
+                                                :autocomplete="fieldName">
+                                        </div>
+                                        <div v-else>
+                                            <input @blur="validateField(fieldName, 'secondStep')" v-model="field.value"
+                                                :id="fieldName" type="text" class="form-control" :name="fieldName"
+                                                :autocomplete="fieldName">
+                                        </div>
+
+                                        <div v-if="field === currentField && !field.validated" class="client-error-msg">{{
                                             field.errorMessage }}</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div v-if="IsFirstStepValidated" class="second-step">
-                                <h3>Your Restaurant</h3>
-                                <div v-for="(field, fieldName) in formData.secondStep" :key="fieldName" class="input-wrapper">
-                                    <label :for="fieldName">{{ fieldName }}</label>
-                                    <div>
-                                        <div class="client-error-msg"></div>
-                                        <input v-model="field.value" :id="fieldName" :type="fieldName === 'restaurantPhoto' || fieldName === 'restaurantCategories' ?
-                                            (fieldName === 'restaurantPhoto' ? 'file' : 'checkbox') : 'text'"
-                                            class="form-control" :name="fieldName" :autocomplete="fieldName">
-                                    </div>
-                                </div>
-                            </div>
+
+
 
                             <div class="btns-wrapper">
 
@@ -230,6 +311,17 @@ export default {
                     </div>
                     <div class="col-5">
                         <div class="form-images">
+                            <div class="first-step-img" v-if="currentStep === 0">
+                                <img src="/assets/DrawKit-cooking-kitchen-food-vector-illustrations-03.svg" alt="">
+                            </div>
+                            <div class="second-step-imgs" v-if="currentStep === 1">
+                                <div class="scd-step-img">
+                                </div>
+                                <div class="scd-step-img" :class="{'preview-shadow' : imgPreview}" :style="imgPreview ? { 'background-image': `url(${imgPreview})` } : null">
+                                </div>
+                                <div class="scd-step-img">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -274,14 +366,77 @@ export default {
     }
 }
 
+
 .form-images {
-    border-radius: 30px;
-    background-position: center;
-    background-image: url('/assets/DrawKit-cooking-kitchen-food-vector-illustrations-03.svg');
-    background-size: 300%;
     height: 100%;
 }
 
+.first-step-img {
+    height: 100%;
+    overflow: hidden;
+    border-radius: 30px;
+
+
+    img {
+        position: relative;
+        top: -20px;
+        height: 110%;
+        object-fit: cover;
+        overflow: hidden;
+
+    }
+
+}
+
+.second-step-imgs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+
+    >div {
+        flex-grow: 1;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .preview-shadow{
+        border-radius: 30px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    div:nth-child(1) {
+/*         border-top-right-radius: 30px;
+ */        transform: scale(0.8);
+        background-image: url('/assets/DrawKit-cooking-kitchen-food-vector-illustrations-10.svg');
+    }
+
+    div:nth-child(2) {
+        transform: scale(1.1);
+
+
+    }
+
+    div:nth-child(3) {
+/*         border-bottom-right-radius: 30px;
+ */        transform: scale(0.8);
+
+        background-image: url('/assets/DrawKit-cooking-kitchen-food-vector-illustrations-15.svg');
+
+    }
+
+}
+
+
+.categories-container {
+    display: flex;
+    flex-wrap: wrap;
+
+    .category-wrapper {
+        flex-basis: 50%;
+    }
+}
 
 .btns-wrapper {
     margin-top: 15px;

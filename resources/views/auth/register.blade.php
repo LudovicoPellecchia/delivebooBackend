@@ -3,8 +3,6 @@
 @section('title', 'Registrazione')
 <div class="container mt-3">
 
-    <progress-bar></progress-bar>
-
     <register-form></register-form>
 </div>
 

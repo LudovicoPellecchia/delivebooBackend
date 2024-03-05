@@ -2,6 +2,7 @@
 
 export default {
     props: {
+        progress: Number
     },
     components: {
 
@@ -21,16 +22,16 @@ export default {
             <div class="progress-bar-container text-center mt-4 mb-4">
                 <div class="progress-steps">
                     <span class="circle active">1</span>
-                    <span class="circle">2</span>
-                    <span class="circle">3</span>
+                    <span class="circle" :class="{ 'active': progress === 0.5 || progress === 1 }">2</span>
+                    <span class="circle" :class="{ 'active': progress === 1 }">3</span>
                     <div class="progress-bar">
-                        <span class="indicator"></span>
+                        <span :style="{width: `${progress * 100}%`}" class="indicator"></span>
                     </div>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <div class="step-name">Il tuo profilo</div>
-                    <div class="step-name">Il tuo ristorante</div>
-                    <div class="step-name">Conferma i tuoi dati</div>
+                    <div class="step-name step-active">Il tuo profilo</div>
+                    <div class="step-name" :class="{ 'step-active': progress === 0.5 || progress === 1 }">Il tuo ristorante</div>
+                    <div class="step-name" :class="{ 'step-active': progress === 1 }">Conferma i tuoi dati</div>
                 </div>
             </div>
         </div>
@@ -87,5 +88,14 @@ export default {
             }
         }
     }
+}
+
+.step-name{
+    color: rgb(230, 225, 226);
+}
+
+.step-active{
+    transition: all 300ms;
+    color: var(--clr-primary) !important;
 }
 </style>
