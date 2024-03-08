@@ -287,72 +287,68 @@ export default {
 
 
                             <!-- FIRST STEP -->
-                            <div>
-                                <Transition>
-                                    <div v-if="currentStep === 0" class="first-step" >
-                                        <h3>Your Profile</h3>
+                            <Transition>
+                                <div v-if="currentStep === 0" class="first-step">
+                                    <h3>Your Profile</h3>
 
-                                        <div v-for="(field, fieldName) in formData.firstStep" :key="fieldName"
-                                            class="input-wrapper">
-                                            <div>
-                                                <label :for="fieldName">{{ field.label }}</label>
+                                    <div v-for="(field, fieldName) in formData.firstStep" :key="fieldName"
+                                        class="input-wrapper">
+                                        <div>
+                                            <label :for="fieldName">{{ field.label }}</label>
 
-                                                <input @blur="validateField(fieldName, 'firstStep')"
+                                            <input @blur="validateField(fieldName, 'firstStep')" v-model="field.value"
+                                                :id="fieldName"
+                                                :type="fieldName === 'password' || fieldName === 'confirmPassword' ? 'password' : 'text'"
+                                                class="form-control" :name="fieldName" :autocomplete="fieldName">
+
+                                            <div v-if="field === currentField && !field.validated"
+                                                class="client-error-msg">
+                                                {{ field.errorMessage }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECOND STEP -->
+                                <div v-else-if="currentStep === 1" class="second-step">
+                                    <h3>Your Restaurant</h3>
+                                    <div v-for="(field, fieldName) in formData.secondStep" :key="fieldName"
+                                        class="input-wrapper">
+
+                                        <div>
+                                            <label :for="fieldName">{{ field.label }}</label>
+
+                                            <div v-if="fieldName === 'restaurantCategories'"
+                                                class="categories-container">
+                                                <div class="category-wrapper"
+                                                    v-for="(category, index) in store.typologies" :key="index">
+                                                    <input @blur="validateField(fieldName, 'secondStep')"
+                                                        type="checkbox" :id="'category_' + index" :value="category.name"
+                                                        v-model="field.value">
+                                                    <label :for="'category_' + index">{{ category.name }}</label>
+                                                </div>
+                                            </div>
+                                            <div v-else-if="fieldName === 'restaurantPhoto'">
+                                                <input @blur="validateField(fieldName, 'secondStep')" :id="fieldName"
+                                                    type="file" @change="handleImgFile" class="form-control"
+                                                    :name="fieldName" :autocomplete="fieldName">
+                                            </div>
+                                            <div v-else>
+                                                <input @blur="validateField(fieldName, 'secondStep')"
                                                     v-model="field.value" :id="fieldName"
-                                                    :type="fieldName === 'password' || fieldName === 'confirmPassword' ? 'password' : 'text'"
+                                                    :type="fieldName === 'restaurantTelephone' || fieldName === 'restaurantPiva' ? 'number' : 'text'"
                                                     class="form-control" :name="fieldName" :autocomplete="fieldName">
-
-                                                <div v-if="field === currentField && !field.validated"
-                                                    class="client-error-msg">
-                                                    {{ field.errorMessage }}</div>
                                             </div>
+
+                                            <div v-if="field === currentField && !field.validated"
+                                                class="client-error-msg">
+                                                {{ field.errorMessage }}</div>
                                         </div>
                                     </div>
-
-                                    <!-- SECOND STEP -->
-                                    <div v-else-if="currentStep === 1" class="second-step" >
-                                        <h3>Your Restaurant</h3>
-                                        <div v-for="(field, fieldName) in formData.secondStep" :key="fieldName"
-                                            class="input-wrapper">
-
-                                            <div>
-                                                <label :for="fieldName">{{ field.label }}</label>
-
-                                                <div v-if="fieldName === 'restaurantCategories'"
-                                                    class="categories-container">
-                                                    <div class="category-wrapper"
-                                                        v-for="(category, index) in store.typologies" :key="index">
-                                                        <input @blur="validateField(fieldName, 'secondStep')"
-                                                            type="checkbox" :id="'category_' + index"
-                                                            :value="category.name" v-model="field.value">
-                                                        <label :for="'category_' + index">{{ category.name }}</label>
-                                                    </div>
-                                                </div>
-                                                <div v-else-if="fieldName === 'restaurantPhoto'">
-                                                    <input @blur="validateField(fieldName, 'secondStep')"
-                                                        :id="fieldName" type="file" @change="handleImgFile"
-                                                        class="form-control" :name="fieldName"
-                                                        :autocomplete="fieldName">
-                                                </div>
-                                                <div v-else>
-                                                    <input @blur="validateField(fieldName, 'secondStep')"
-                                                        v-model="field.value" :id="fieldName"
-                                                        :type="fieldName === 'restaurantTelephone' || fieldName === 'restaurantPiva' ? 'number' : 'text'"
-                                                        class="form-control" :name="fieldName"
-                                                        :autocomplete="fieldName">
-                                                </div>
-
-                                                <div v-if="field === currentField && !field.validated"
-                                                    class="client-error-msg">
-                                                    {{ field.errorMessage }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Transition>
-                            </div>
+                                </div>
+                            </Transition>
 
 
-                            <!-- THIRD STEP Confirmation Data -->
+                            <!-- THIRD STEP -->
                             <div v-if="currentStep === 2" class="row row-cols-2 third-step">
                                 <div class="col">
                                     <div class="profile-data">
@@ -435,9 +431,6 @@ export default {
 
 <style lang="scss" scoped>
 
-.first-step,.second-step{
-    overflow: hidden;
-}
 
 .v-enter-active,
 .v-leave-active {
@@ -448,7 +441,7 @@ export default {
 .v-leave-to {
     position: absolute;
     opacity: 0;
-    transform: translate(3000px);
+    transform: translate(100%);
 }
 
 .col-7 {
@@ -463,6 +456,7 @@ export default {
 }
 
 .form-sct {
+    position: relative;
     overflow: hidden;
     padding: 40px;
     border-bottom-left-radius: 30px;
