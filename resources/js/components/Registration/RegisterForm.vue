@@ -289,7 +289,7 @@ export default {
                             <!-- FIRST STEP -->
                             <div>
                                 <Transition>
-                                    <div v-if="currentStep === 0" class="first-Step" :class="currentStep === 0 ? 'active' : ''">
+                                    <div v-if="currentStep === 0" class="first-step" >
                                         <h3>Your Profile</h3>
 
                                         <div v-for="(field, fieldName) in formData.firstStep" :key="fieldName"
@@ -310,7 +310,7 @@ export default {
                                     </div>
 
                                     <!-- SECOND STEP -->
-                                    <div v-else-if="currentStep === 1" class="second-step" :class="currentStep === 1 ? 'active' : ''" >
+                                    <div v-else-if="currentStep === 1" class="second-step" >
                                         <h3>Your Restaurant</h3>
                                         <div v-for="(field, fieldName) in formData.secondStep" :key="fieldName"
                                             class="input-wrapper">
@@ -434,12 +434,9 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.first-Step, .second-step{
-    position: absolute;
-}
 
-.first-Step.active, .second-step.active{
-    position: static;
+.first-step,.second-step{
+    overflow: hidden;
 }
 
 .v-enter-active,
@@ -449,8 +446,9 @@ export default {
 
 .v-enter-from,
 .v-leave-to {
+    position: absolute;
     opacity: 0;
-    transform: translate(1000px);
+    transform: translate(3000px);
 }
 
 .col-7 {
